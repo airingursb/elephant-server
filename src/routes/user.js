@@ -13,8 +13,8 @@ import {
 
 const router = express.Router()
 
-/* users/wxp_login */
-router.post('/wxp_login', (req, res) => {
+/* users/login */
+router.post('/login', (req, res) => {
 
   // userInfo 可以为空，因为存在用户不同意授权的情况
   // 登录凭证 code 获取 session_key 和 openid
@@ -69,6 +69,54 @@ router.post('/wxp_login', (req, res) => {
     })
   }
 
+  response()
+})
+
+/* users/info */
+router.get('/info', (req, res) => {
+  const { uid, timestamp, token } = req.query
+  validate(res, true, uid, timestamp, token)
+
+  const response = async () => {
+
+    return res.json(MESSAGE.OK)
+  }
+  response()
+})
+
+/* users/food */
+router.get('/food', (req, res) => {
+  const { uid, timestamp, token } = req.query
+  validate(res, true, uid, timestamp, token)
+
+  const response = async () => {
+
+    return res.json(MESSAGE.OK)
+  }
+  response()
+})
+
+/* users/save */
+router.post('/save', (req, res) => {
+  const { uid, timestamp, token } = req.body
+  validate(res, true, uid, timestamp, token)
+
+  const response = async () => {
+
+    return res.json(MESSAGE.OK)
+  }
+  response()
+})
+
+/* users/dish */
+router.get('/dish', (req, res) => {
+  const { uid, timestamp, token } = req.query
+  validate(res, true, uid, timestamp, token)
+
+  const response = async () => {
+
+    return res.json(MESSAGE.OK)
+  }
   response()
 })
 
