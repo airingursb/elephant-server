@@ -8,16 +8,16 @@ const Dish = db.import('./dish')
 const Record = db.import('./record')
 const Save = db.import('./save')
 
-Record.hasMany(User, { foreignKey: 'user_id' })
-Record.hasMany(Dish, { foreignKey: 'dish_id' })
+User.hasMany(Record, { foreignKey: 'user_id' })
+Dish.hasMany(Record, { foreignKey: 'dish_id' })
 
-Save.hasMany(User, { foreignKey: 'user_id' })
-Save.hasMany(Food, { foreignKey: 'food_id' })
+User.hasMany(Save, { foreignKey: 'user_id' })
+Food.hasMany(Save, { foreignKey: 'food_id' })
 
-User.belongsTo(Record)
-Dish.belongsTo(Record)
-User.belongsTo(Save)
-Food.belongsTo(Save)
+Record.belongsTo(User)
+Record.belongsTo(Dish)
+Save.belongsTo(User)
+Save.belongsTo(Food)
 
 db.sync()
 
