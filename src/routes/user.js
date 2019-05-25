@@ -2,6 +2,10 @@ import express from 'express'
 
 import {
   User,
+  Record,
+  Save,
+  Food,
+  Dish
 } from '../models'
 
 import {
@@ -79,7 +83,14 @@ router.get('/info', (req, res) => {
 
   const response = async () => {
 
-    return res.json(MESSAGE.OK)
+    const data = await User.findOne({
+      where: {
+        id: uid
+      },
+      include: [Record, Save]
+    })
+
+    return res.json({ ...MESSAGE.OK, data })
   }
   response()
 })
@@ -90,19 +101,30 @@ router.get('/food', (req, res) => {
   validate(res, true, uid, timestamp, token)
 
   const response = async () => {
-
-    return res.json(MESSAGE.OK)
+    const data = await Save.findOne({
+      where: {
+        user_id: uid
+      }
+    })
+    return res.json({ ...MESSAGE.OK, data })
   }
   response()
 })
 
 /* users/save */
 router.post('/save', (req, res) => {
-  const { uid, timestamp, token } = req.body
-  validate(res, true, uid, timestamp, token)
+  const { uid, timestamp, token, food_id, num } = req.body
+  validate(res, true, uid, timestamp, token, food_id, num)
 
   const response = async () => {
 
+    await Save.create({
+      user_id: uid,
+      food_id,
+      num,
+      in_time: Date.now(),
+      last_time: -1 // TODO: 
+    })
     return res.json(MESSAGE.OK)
   }
   response()
@@ -115,7 +137,28 @@ router.get('/dish', (req, res) => {
 
   const response = async () => {
 
-    return res.json(MESSAGE.OK)
+    const save = await Save.findAll({
+      where: {
+        user_id: uid
+      },
+      include: [{
+        model: Food,
+        attributes: ['name']
+      }]
+    })
+
+    const foods = await save.map(v => {
+      return `%${v.food.dataValues.name}%`
+    })
+    const data = await Dish.findAll({
+      where: {
+        'material': {
+          // $like: { $any: foods } // mysql LIKE 不能与 ANY 连用
+          $like: foods[Math.floor(Math.random() * foods.length)]
+        }
+      }
+    })
+    return res.json({ ...MESSAGE.OK, data })
   }
   response()
 })

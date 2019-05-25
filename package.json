@@ -1,5 +1,5 @@
 {
-  "name": "RECYC002",
+  "name": "elephant_server",
   "version": "1.0.0",
   "private": true,
   "author": "Airing",
@@ -17,7 +17,7 @@
     "mysql": "^2.13.0",
     "natives": "^1.1.6",
     "qiniu": "^6.1.13",
-    "sequelize": "^3.31.1",
+    "sequelize": "^3.33.0",
     "serve-favicon": "~2.3.2",
     "sha1": "^1.1.1"
   },

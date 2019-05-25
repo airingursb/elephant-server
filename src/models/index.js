@@ -1,4 +1,4 @@
-const db = require('./db').dbConnect()
+const db = require('../config/sequelize').dbConnect()
 
 // 模型文档：https://www.yuque.com/oh-bear/elephant-fridge/models
 

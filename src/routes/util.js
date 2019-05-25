@@ -4,6 +4,8 @@ import qiniu from 'qiniu'
 import {
   MESSAGE,
   validate,
+  QINIU_ACCESS,
+  QINIU_SECRET
 } from '../config'
 
 const router = express.Router()
@@ -33,8 +35,8 @@ router.get('/qiniu_token', (req, res) => {
 
 /* utils/what_food */
 router.get('/what_food', (req, res) => {
-  const { uid, timestamp, token } = req.query
-  validate(res, true, uid, timestamp, token)
+  const { uid, timestamp, token, url } = req.query
+  validate(res, true, uid, timestamp, token, url)
 
   const response = async () => {
 
