@@ -1,0 +1,5 @@
+@baseUrl = http://localhost:7016
+# @baseUrl = https://food.api.ursb.me
+
+# 推荐菜谱
+GET {{baseUrl}}/users/dish?uid=1&timestamp=1&token=1 HTTP/1.1
