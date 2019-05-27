@@ -60,3 +60,4 @@ typings/
 dist/
 .idea/
 .DS_Store
+src/config/index.js
