@@ -17,6 +17,8 @@
     "mysql": "^2.13.0",
     "natives": "^1.1.6",
     "qiniu": "^6.1.13",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4",
     "sequelize": "^3.33.0",
     "serve-favicon": "~2.3.2",
     "sha1": "^1.1.1"
