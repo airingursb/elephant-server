@@ -108,14 +108,42 @@ router.get('/food', (req, res) => {
   const response = async () => {
     const data = await Save.findAll({
       where: {
-        user_id: uid
+        user_id: uid,
+        exist: 1
       },
-      include: [{
-        model: Food,
-        attributes: ['name', 'pic', 'category', 'kw', 'nutrition', 'dishes', 'saveway']
-      }]
+      include: [
+        {
+          model: Food,
+          attributes: ['name', 'pic', 'category', 'kw', 'nutrition', 'dishes', 'saveway'],
+          include: [{
+            model: Dish,
+            as: 'dishList'
+          }]
+        }
+      ]
     })
+
     return res.json({ ...MESSAGE.OK, data })
+  }
+  response()
+})
+
+/* users/finish */
+router.post('/finish', (req, res) => {
+  const { uid, timestamp, token, food_id } = req.body
+  validate(res, true, uid, timestamp, token, food_id)
+
+  const response = async () => {
+
+    await Save.update(
+      {
+        exist: 0
+      },
+      {
+        where: { food_id }
+      }
+    )
+    return res.json(MESSAGE.OK)
   }
   response()
 })
@@ -127,13 +155,23 @@ router.post('/save', (req, res) => {
 
   const response = async () => {
 
-    await Save.create({
-      user_id: uid,
-      food_id,
-      num,
-      in_time: Date.now(),
-      last_time: -1 // TODO:
+    const save = await Save.findOne({
+      where: {
+        user_id: uid,
+        food_id
+      }
     })
+
+    if (!save) {
+      await Save.create({
+        user_id: uid,
+        food_id,
+        num,
+        in_time: Date.now(),
+        last_time: -1 // TODO:
+      })
+    }
+
     return res.json(MESSAGE.OK)
   }
   response()
@@ -148,28 +186,29 @@ router.get('/dish', (req, res) => {
 
     const save = await Save.findAll({
       where: {
-        user_id: uid
+        user_id: uid,
+        exist: 1
       },
       include: [{
         model: Food,
-        attributes: ['name']
+        include: [{
+          model: Dish,
+          as: 'dishList',
+          include: [{
+            model: Food,
+            as: 'foodList'
+          }]
+        }]
       }]
     })
 
     const foods = await save.map(v => {
-      return `%${v.food.dataValues.name}%`
+      return v.food.dataValues.dishList
     })
 
-    console.log(foods)
-    const data = await Dish.findAll({
-      where: {
-        'material': {
-          // $like: { $any: foods } // mysql LIKE 不能与 ANY 连用
-          $like: foods[Math.floor(Math.random() * foods.length)]
-        }
-      }
-    })
-    return res.json({ ...MESSAGE.OK, data })
+
+
+    return res.json({ ...MESSAGE.OK, foods })
   }
   response()
 })
