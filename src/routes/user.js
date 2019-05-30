@@ -13,7 +13,11 @@ import {
   KEY,
   md5Pwd,
   validate,
+  WXP_APPID,
+  WXP_SECRET,
 } from '../config'
+
+import rp from 'request-promise'
 
 const router = express.Router()
 
@@ -39,6 +43,7 @@ router.post('/login', (req, res) => {
   const response = async () => {
 
     const data = await rp(options)
+    console.log(data)
     const { openid } = data
 
     if (!openid) {
@@ -58,7 +63,7 @@ router.post('/login', (req, res) => {
         face: info.avatarUrl
       })
 
-      user = await User.findOne({ where: { openid }, include: [Badge] })
+      user = await User.findOne({ where: { openid } })
     }
 
     const timestamp = Date.now()
@@ -101,10 +106,14 @@ router.get('/food', (req, res) => {
   validate(res, true, uid, timestamp, token)
 
   const response = async () => {
-    const data = await Save.findOne({
+    const data = await Save.findAll({
       where: {
         user_id: uid
-      }
+      },
+      include: [{
+        model: Food,
+        attributes: ['name', 'pic', 'category', 'kw', 'nutrition', 'dishes', 'saveway']
+      }]
     })
     return res.json({ ...MESSAGE.OK, data })
   }
@@ -123,7 +132,7 @@ router.post('/save', (req, res) => {
       food_id,
       num,
       in_time: Date.now(),
-      last_time: -1 // TODO: 
+      last_time: -1 // TODO:
     })
     return res.json(MESSAGE.OK)
   }
@@ -150,6 +159,8 @@ router.get('/dish', (req, res) => {
     const foods = await save.map(v => {
       return `%${v.food.dataValues.name}%`
     })
+
+    console.log(foods)
     const data = await Dish.findAll({
       where: {
         'material': {
