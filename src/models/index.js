@@ -7,6 +7,10 @@ const Food = db.import('./food')
 const Dish = db.import('./dish')
 const Record = db.import('./record')
 const Save = db.import('./save')
+const FoodToDish = db.import('./foodTodish')
+
+Food.belongsToMany(Dish, { as: 'dishList', through: FoodToDish, foreignKey: 'food_id' })
+Dish.belongsToMany(Food, { as: 'foodList', through: FoodToDish, foreignKey: 'dish_id' })
 
 User.hasMany(Record, { foreignKey: 'user_id' })
 Dish.hasMany(Record, { foreignKey: 'dish_id' })
@@ -27,4 +31,5 @@ module.exports = {
   Dish,
   Record,
   Save,
+  FoodToDish
 }
