@@ -1,9 +1,9 @@
 import Sequelize from 'sequelize'
 
-import { SQL_ACCOUNT, SQL_PASSWORD } from './index'
+import { SQL_USER, SQL_PASSWORD } from './index'
 
 export const dbConnect = () => {
-  return new Sequelize('food', SQL_ACCOUNT, SQL_PASSWORD,
+  return new Sequelize('elephant', SQL_USER, SQL_PASSWORD,
     {
       'dialect': 'mysql',
       'dialectOptions': {

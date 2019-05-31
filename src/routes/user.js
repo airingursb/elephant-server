@@ -170,8 +170,9 @@ router.post('/save', (req, res) => {
         in_time: Date.now(),
         last_time: -1 // TODO:
       })
+    } else {
+      await Save.update({ exist: 1 }, { where: { user_id: uid, food_id} })
     }
-
     return res.json(MESSAGE.OK)
   }
   response()

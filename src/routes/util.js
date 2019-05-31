@@ -8,6 +8,10 @@ import {
   QINIU_SECRET
 } from '../config'
 
+import { Food } from '../models'
+
+import rp from 'request-promise'
+
 const router = express.Router()
 
 qiniu.conf.ACCESS_KEY = QINIU_ACCESS
@@ -40,8 +44,35 @@ router.get('/what_food', (req, res) => {
 
   const response = async () => {
 
-    return res.json(MESSAGE.OK)
+    let options = {
+      uri: 'http://118.24.158.234/image-predict',
+      method: 'POST',
+      body: {
+        image_url: url,
+        key: 'd0977d7dcb6b4620a2391c349d7e2eb1',
+      },
+      json: true
+    }
+
+    const result = await rp(options)
+    const { data } = result
+    console.log(result)
+    console.log(data)
+    const food = await Food.findOne({ where: { name: data.name || '' } })
+    return res.json({ ...MESSAGE.OK, data: food && [food] || [data] })
   }
+  response()
+})
+
+router.get('/get_food_by_name', (req, res) => { 
+  const { uid, timestamp, token, name } = req.query
+  validate(res, true, uid, timestamp, token, name)
+
+  const response = async () => {
+    const data = await Food.findOne({ where: { name } })
+    return res.json({ ...MESSAGE.OK, data })
+  }
+
   response()
 })
 
